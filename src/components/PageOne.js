@@ -4,7 +4,7 @@ import BootstrapTable from 'reactjs-bootstrap-table';
 import Logger from 'simple-console-logger';
 import { selectionFromString } from '../util';
 
-const log = Logger.getLogger("PageOne"); 
+const log = Logger.getLogger("PageOne");
 
 function noop() {} // get rid of warnings about checkbox change handler
 
@@ -17,6 +17,13 @@ class PageOne extends React.Component {
     this.setSelected = this.setSelected.bind(this);
     this.changeTableClass = this.changeTableClass.bind(this);
     this.changeActiveClass = this.changeActiveClass.bind(this);
+    this.onKeyPress = this.onKeyPress.bind(this);
+    this.onSelectType = this.onSelectType.bind(this);
+  }
+
+  onSelectType(value) {
+    log.debug('select type: ' + value);
+    this.props.setSelectType(value);
   }
 
   changeTableClass(val) {
@@ -25,6 +32,12 @@ class PageOne extends React.Component {
 
   changeActiveClass(val) {
     this.props.setActiveClass(val);
+  }
+
+  onKeyPress(e) {
+    if (e.key === 'Enter') {
+      this.setSelected();
+    }
   }
 
   setSelected() {
@@ -93,7 +106,7 @@ class PageOne extends React.Component {
             <div className="row">
               <div className="col-md-4">
                 <label>select</label>
-                <DropdownList data={select} defaultValue={"none"} style={{maxWidth: 400}}/>
+                <DropdownList data={select} defaultValue={this.props.options.select} onChange={this.onSelectType}/>
               </div>
               <div className="col-md-4">
                 <label>tableClass</label>
@@ -132,13 +145,15 @@ class PageOne extends React.Component {
               </div>
 
               <div className="col-md-4">
-                <div style={{color: 'green', fontWeight: 'bold', marginTop: '1em', marginBottom: '1em'}}>Selected: </div>
+                <div style={{color: 'green', fontWeight: 'bold', marginTop: '1em', marginBottom: '1em'}}>
+                  Selected: {this.props.selectedCount}
+                </div>
                 <div>
                   <button className="btn btn-primary" style={{marginRight:'1em'}} onClick={this.props.clearSelection}>
-                    Clear Selection
+                    Clear Selected
                   </button>
                   <button className="btn btn-warning">
-                    <span className="glyphicon glyphicon-remove"></span> Delete Selected
+                    <span className="glyphicon glyphicon-remove"></span> Delete
                   </button>
                   <button className="btn btn-default" style={{marginLeft:'1em'}} onClick={this.props.reloadData}>
                     Reload Data
@@ -149,7 +164,7 @@ class PageOne extends React.Component {
               <div className="col-md-4" style={{padingRight: 30}}>
                 <div style={{marginTop: '1em', marginBottom: '1em', fontWeight: 'bold'}}>Programmatic Selection: </div>
                 <div className="input-group">
-                  <input type="text" className="form-control" ref="selectedInput"
+                  <input type="text" className="form-control" ref="selectedInput" onKeyPress={this.onKeyPress}
                     placeholder="Enter ID values separated by spaces ..."/>
                   <span className="input-group-btn">
                     <button className="btn btn-secondary" onClick={this.setSelected} type="button">Select</button>
@@ -167,7 +182,7 @@ class PageOne extends React.Component {
 
             <BootstrapTable data={this.props.data}
               headers={this.props.options.headers}
-              select="multiple"
+              select={this.props.options.select}
               tableClass={this.props.options.tableClass}
               resize={resize}
               activeClass={this.props.options.activeClass}
@@ -176,7 +191,7 @@ class PageOne extends React.Component {
               columns={columns}/>
 
             <div className="well" id="footer" style={{marginTop: '-20px', fontWeight: 'bold', color: 'green'}}>
-                Selected: {'1'}
+                Selected: {this.props.selectedCount}
               <button className="btn btn-primary pull-right" style={{display: 'inline-block', marginTop: -5}}
                   onClick={this.props.clearSelection}>
                 Clear Selection

@@ -20,7 +20,8 @@ function mapStateToProps(state) {
   return {
     data: state.state.items,
     options: state.state.options,
-    selected: state.state.selected
+    selected: state.state.selected,
+    selectedCount: state.state.selectedCount
   };
 }
 
@@ -47,6 +48,9 @@ function mapDispatchToProps(dispatch) {
     },
     clearSelection: function () {
       dispatch(actions.clearSelection());
+    },
+    setSelectType: function (val) {
+      dispatch(actions.setSelectType(val));
     }
   }
 }

@@ -16,9 +16,11 @@ const initialState = {
     tableClass: "table table-bordered table-hover",
     activeClass: "info",
     resize: true,
-    headers: true
+    headers: true,
+    select: 'single'
   },
   selected: {},
+  selectedCount: 0,
   pending: false
 };
 
@@ -49,6 +51,9 @@ const actions = {
   },
   clearSelection: () => {
     return { type: 'CLEAR_SELECTION' };
+  },
+  setSelectType: (select) => {
+    return { type: 'SET_SELECT_TYPE', select };
   }
 };
 
@@ -57,17 +62,19 @@ const reducer = (state = initialState, action) => {
   switch (action.type) {
     case 'RELOAD_DATA':
       dataService.reloadData(action.size);
-      return objectAssign({}, state, {selected:{}, items: dataService.getData()});
+      return objectAssign({}, state, {selected:{}, selectedCount: 0,
+          items: dataService.getData()});
 
     case 'SET_SELECTED':
-      return objectAssign({}, state, {selected: action.selected});
+      return objectAssign({}, state, {selected: action.selected,
+          selectedCount: Object.keys(action.selected).length });
 
     case 'CLEAR_SELECTION':
-      return objectAssign({}, state, {selected: {}});
+      return objectAssign({}, state, {selected: {}, selectedCount: 0});
 
     case 'DELETE_SELECTED':
       dataService.reloadData(action.size);
-      return objectAssign({}, state, {items: dataService.getData()});
+      return objectAssign({}, state, {selected:{}, selectedCount: 0, items: dataService.getData()});
 
     case 'SHOW_HEADER':
       forceResize();
@@ -80,15 +87,18 @@ const reducer = (state = initialState, action) => {
       return objectAssign({}, state, {options: newOpts});
 
     case 'SET_ACTIVE_CLASS':
-      console.log('setActiveClass ' + action.value)
       newOpts = objectAssign({}, state.options, {activeClass: action.value});
       return objectAssign({}, state, {options: newOpts});
 
     case 'AUTO_RESIZE':
       forceResize();
-      console.log('reducer setting resize to: ' + action.value);
       newOpts = objectAssign({}, state.options, {resize: action.value});
       return objectAssign({}, state, {options: newOpts});
+
+    case 'SET_SELECT_TYPE':
+      forceResize();
+      newOpts = objectAssign({}, state.options, {select: action.select});
+      return objectAssign({}, state, {selected: {}, selectedCount: 0, options: newOpts});
 
     default:
       return state;
