@@ -2,8 +2,9 @@ import React from 'react';
 import { DropdownList } from 'react-widgets';
 import BootstrapTable from 'reactjs-bootstrap-table';
 import Logger from 'simple-console-logger';
+import { selectionFromString } from '../util';
 
-const log = Logger.getLogger("PageOne");
+const log = Logger.getLogger("PageOne"); 
 
 function noop() {} // get rid of warnings about checkbox change handler
 
@@ -26,9 +27,11 @@ class PageOne extends React.Component {
     this.props.setActiveClass(val);
   }
 
-  setSelected(e) {
+  setSelected() {
     if (this.refs.selectedInput) {
       log.debug('setSelected: ' + this.refs.selectedInput.value);
+      let newSelection = selectionFromString(this.refs.selectedInput.value);
+      this.props.setSelected(newSelection);
     }
   }
 
@@ -68,7 +71,9 @@ class PageOne extends React.Component {
 
     let activeClass = [
       'active',
-      'info'
+      'info',
+      'success',
+      'warning'
     ];
 
     let columns = [
@@ -96,7 +101,7 @@ class PageOne extends React.Component {
                     onChange={this.changeTableClass}/>
               </div>
               <div className="col-md-4">
-                <label>activeClass</label>
+                <label>activeClass (selected)</label>
                 <DropdownList data={activeClass} defaultValue={this.props.options.activeClass}
                   onChange={this.changeActiveClass}/>
               </div>
@@ -129,9 +134,14 @@ class PageOne extends React.Component {
               <div className="col-md-4">
                 <div style={{color: 'green', fontWeight: 'bold', marginTop: '1em', marginBottom: '1em'}}>Selected: </div>
                 <div>
-                  <button className="btn btn-primary" style={{marginRight:'1em'}}>Clear Selection</button>
+                  <button className="btn btn-primary" style={{marginRight:'1em'}} onClick={this.props.clearSelection}>
+                    Clear Selection
+                  </button>
                   <button className="btn btn-warning">
                     <span className="glyphicon glyphicon-remove"></span> Delete Selected
+                  </button>
+                  <button className="btn btn-default" style={{marginLeft:'1em'}} onClick={this.props.reloadData}>
+                    Reload Data
                   </button>
                 </div>
               </div>
@@ -167,7 +177,8 @@ class PageOne extends React.Component {
 
             <div className="well" id="footer" style={{marginTop: '-20px', fontWeight: 'bold', color: 'green'}}>
                 Selected: {'1'}
-              <button className="btn btn-primary pull-right" style={{display: 'inline-block', marginTop: -5}}>
+              <button className="btn btn-primary pull-right" style={{display: 'inline-block', marginTop: -5}}
+                  onClick={this.props.clearSelection}>
                 Clear Selection
               </button>
               <div style={{height: 1}}></div>

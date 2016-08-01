@@ -41,6 +41,12 @@ function mapDispatchToProps(dispatch) {
     },
     setActiveClass: function (value) {
       dispatch(actions.setActiveClass(value));
+    },
+    reloadData: function (size) {
+      dispatch(actions.reloadData(size));
+    },
+    clearSelection: function () {
+      dispatch(actions.clearSelection());
     }
   }
 }

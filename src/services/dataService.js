@@ -19,6 +19,10 @@ function DataService() {
 
   data = createData(500);
 
+  this.reloadData = function(size) {
+    data = createData(size);
+  }
+
   this.getData = function (col, dir) {
     if (col) {
       let sortedData = [];

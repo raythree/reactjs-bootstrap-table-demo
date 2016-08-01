@@ -25,8 +25,9 @@ const initialState = {
 const constants = {};
 
 const actions = {
-  generateData: (size) => {
-    return { type: 'GENERATE_DATA ', size: size };
+  reloadData: (size) => {
+    size = 500; // currently forcing it to 500
+    return { type: 'RELOAD_DATA', size };
   },
   setSelected: (newSelection) => {
     return { type: 'SET_SELECTED', selected: newSelection };
@@ -45,21 +46,27 @@ const actions = {
   },
   setActiveClass: (value) => {
     return { type: 'SET_ACTIVE_CLASS', value };
+  },
+  clearSelection: () => {
+    return { type: 'CLEAR_SELECTION' };
   }
 };
 
 const reducer = (state = initialState, action) => {
   let newOpts;
   switch (action.type) {
-    case 'GENERATE_DATA':
-      dataService.generateData(action.size);
-      return objectAssign({}, state, {items: dataService.getData()});
+    case 'RELOAD_DATA':
+      dataService.reloadData(action.size);
+      return objectAssign({}, state, {selected:{}, items: dataService.getData()});
 
     case 'SET_SELECTED':
       return objectAssign({}, state, {selected: action.selected});
 
+    case 'CLEAR_SELECTION':
+      return objectAssign({}, state, {selected: {}});
+
     case 'DELETE_SELECTED':
-      dataService.generateData(action.size);
+      dataService.reloadData(action.size);
       return objectAssign({}, state, {items: dataService.getData()});
 
     case 'SHOW_HEADER':
