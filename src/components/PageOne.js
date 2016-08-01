@@ -10,11 +10,17 @@ class PageOne extends React.Component {
     super(props);
     this.onChange = this.onChange.bind(this);
     this.onShowHeader = this.onShowHeader.bind(this);
+    this.onAutoResize = this.onAutoResize.bind(this);
   }
 
   onShowHeader(e) {
-    log.debug('onShowHeader: ' + e.target.checked)
+    log.debug('onShowHeader: ' + e.target.checked);
     this.props.showHeader(e.target.checked);
+  }
+
+  onAutoResize(e) {
+    log.debug('onAutoResize: ' + e.target.checked);
+    this.props.autoResize(e.target.checked);
   }
 
   onChange(newSelection) {
@@ -22,6 +28,12 @@ class PageOne extends React.Component {
   }
 
   render() {
+    let resize = null;
+    if (this.props.options.resize) {
+      resize = {extra: 0, minSize: 200, elements: ['header', 'footer']};
+    }
+    log.debug('resize option is ' + resize);
+
     let select = [
       'none',
       'single',
@@ -48,8 +60,6 @@ class PageOne extends React.Component {
       { name: 'rand', display: 'Random (sortable)', sort: true }
     ];
 
-    let checkHeaders = this.props.options.headers ? 'checked' : '';
-
     return (
       <div>
         <div className="row" id="header">
@@ -75,13 +85,13 @@ class PageOne extends React.Component {
               <div className="col-md-4">
                 <div className="checkbox">
                   <label>
-                    <input type="checkbox" value={checkHeaders} onClick={this.onShowHeader}/>
+                    <input type="checkbox" checked={this.props.options.headers} onClick={this.onShowHeader}/>
                     Show Column Headers
                   </label>
                 </div>
                 <div className="checkbox">
                   <label>
-                    <input type="checkbox" value="" />
+                    <input type="checkbox" checked={this.props.options.resize} onClick={this.onAutoResize}/>
                     Auto Resize to fit
                   </label>
                 </div>
@@ -125,7 +135,7 @@ class PageOne extends React.Component {
               headers={this.props.options.headers}
               select="multiple"
               tableClass="table table-bordered"
-              resize={{extra: 0, minSize: 200, elements: ['header', 'footer']}}
+              resize={resize}
               activeClass={this.props.activeClass}
               selected={this.props.selected}
               onChange={this.onChange}

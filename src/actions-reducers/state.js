@@ -1,14 +1,23 @@
 import objectAssign from 'object-assign';
 import { dataService } from '../services/dataService';
-//import Logger from 'simple-console-logger';
-//const log = Logger.getLogger("reducer");
+
+// This is a hack to force a resize when options are changed via checkboxes.
+// Normally this is not needed when the options are configured as on
+// or off via the table properties.
+function forceResize() {
+  console.log('setting resize');
+  setTimeout(function () {
+    console.log('resized');
+    window.dispatchEvent(new Event('resize'));
+  }, 500);
+}
 
 const initialState = {
   items: dataService.getData(),
   options: {
     tableClass: "table",
     activeClass: "info",
-    resize: null,
+    resize: true,
     headers: true
   },
   selected: {},
@@ -29,6 +38,9 @@ const actions = {
   },
   showHeader: (show) => {
     return { type: 'SHOW_HEADER', show };
+  },
+  autoResize: (value) => {
+    return { type: 'AUTO_RESIZE', value };
   }
 };
 
@@ -47,7 +59,14 @@ const reducer = (state = initialState, action) => {
       return objectAssign({}, state, {items: dataService.getData()});
 
     case 'SHOW_HEADER':
+      forceResize();
       newOpts = objectAssign({}, state.options, {headers: action.show});
+      return objectAssign({}, state, {options: newOpts});
+
+    case 'AUTO_RESIZE':
+      forceResize();
+      console.log('reducer setting resize to: ' + action.value);
+      newOpts = objectAssign({}, state.options, {resize: action.value});
       return objectAssign({}, state, {options: newOpts});
 
     default:

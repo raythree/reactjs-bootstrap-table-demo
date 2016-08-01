@@ -32,6 +32,9 @@ function mapDispatchToProps(dispatch) {
     showHeader: function (show) {
       log.debug('showHeader: ' + show);
       dispatch(actions.showHeader(show));
+    },
+    autoResize: function (value) {
+      dispatch(actions.autoResize(value));
     }
   }
 }
