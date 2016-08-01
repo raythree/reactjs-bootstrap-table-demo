@@ -35,6 +35,12 @@ function mapDispatchToProps(dispatch) {
     },
     autoResize: function (value) {
       dispatch(actions.autoResize(value));
+    },
+    setTableClass: function (value) {
+      dispatch(actions.setTableClass(value));
+    },
+    setActiveClass: function (value) {
+      dispatch(actions.setActiveClass(value));
     }
   }
 }

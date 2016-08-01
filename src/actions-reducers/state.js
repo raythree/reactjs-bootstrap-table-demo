@@ -5,9 +5,7 @@ import { dataService } from '../services/dataService';
 // Normally this is not needed when the options are configured as on
 // or off via the table properties.
 function forceResize() {
-  console.log('setting resize');
   setTimeout(function () {
-    console.log('resized');
     window.dispatchEvent(new Event('resize'));
   }, 500);
 }
@@ -15,7 +13,7 @@ function forceResize() {
 const initialState = {
   items: dataService.getData(),
   options: {
-    tableClass: "table",
+    tableClass: "table table-bordered table-hover",
     activeClass: "info",
     resize: true,
     headers: true
@@ -41,6 +39,12 @@ const actions = {
   },
   autoResize: (value) => {
     return { type: 'AUTO_RESIZE', value };
+  },
+  setTableClass: (value) => {
+    return { type: 'SET_TABLE_CLASS', value };
+  },
+  setActiveClass: (value) => {
+    return { type: 'SET_ACTIVE_CLASS', value };
   }
 };
 
@@ -61,6 +65,16 @@ const reducer = (state = initialState, action) => {
     case 'SHOW_HEADER':
       forceResize();
       newOpts = objectAssign({}, state.options, {headers: action.show});
+      return objectAssign({}, state, {options: newOpts});
+
+    case 'SET_TABLE_CLASS':
+      forceResize();
+      newOpts = objectAssign({}, state.options, {tableClass: action.value});
+      return objectAssign({}, state, {options: newOpts});
+
+    case 'SET_ACTIVE_CLASS':
+      console.log('setActiveClass ' + action.value)
+      newOpts = objectAssign({}, state.options, {activeClass: action.value});
       return objectAssign({}, state, {options: newOpts});
 
     case 'AUTO_RESIZE':

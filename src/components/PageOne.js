@@ -5,12 +5,31 @@ import Logger from 'simple-console-logger';
 
 const log = Logger.getLogger("PageOne");
 
+function noop() {} // get rid of warnings about checkbox change handler
+
 class PageOne extends React.Component {
   constructor(props) {
     super(props);
     this.onChange = this.onChange.bind(this);
     this.onShowHeader = this.onShowHeader.bind(this);
     this.onAutoResize = this.onAutoResize.bind(this);
+    this.setSelected = this.setSelected.bind(this);
+    this.changeTableClass = this.changeTableClass.bind(this);
+    this.changeActiveClass = this.changeActiveClass.bind(this);
+  }
+
+  changeTableClass(val) {
+    this.props.setTableClass(val);
+  }
+
+  changeActiveClass(val) {
+    this.props.setActiveClass(val);
+  }
+
+  setSelected(e) {
+    if (this.refs.selectedInput) {
+      log.debug('setSelected: ' + this.refs.selectedInput.value);
+    }
   }
 
   onShowHeader(e) {
@@ -73,11 +92,13 @@ class PageOne extends React.Component {
               </div>
               <div className="col-md-4">
                 <label>tableClass</label>
-                <DropdownList data={tableClass} defaultValue={"table table-bordered table-hover"} style={{maxWidth: 400}}/>
+                <DropdownList data={tableClass} defaultValue={this.props.options.tableClass}
+                    onChange={this.changeTableClass}/>
               </div>
               <div className="col-md-4">
                 <label>activeClass</label>
-                <DropdownList data={activeClass} defaultValue={"info"} style={{maxWidth: 400}}/>
+                <DropdownList data={activeClass} defaultValue={this.props.options.activeClass}
+                  onChange={this.changeActiveClass}/>
               </div>
             </div>
 
@@ -85,13 +106,15 @@ class PageOne extends React.Component {
               <div className="col-md-4">
                 <div className="checkbox">
                   <label>
-                    <input type="checkbox" checked={this.props.options.headers} onClick={this.onShowHeader}/>
+                    <input type="checkbox" checked={this.props.options.headers}
+                      onClick={this.onShowHeader} onChange={noop}/>
                     Show Column Headers
                   </label>
                 </div>
                 <div className="checkbox">
                   <label>
-                    <input type="checkbox" checked={this.props.options.resize} onClick={this.onAutoResize}/>
+                    <input type="checkbox" checked={this.props.options.resize}
+                      onClick={this.onAutoResize} onChange={noop}/>
                     Auto Resize to fit
                   </label>
                 </div>
@@ -116,9 +139,10 @@ class PageOne extends React.Component {
               <div className="col-md-4" style={{padingRight: 30}}>
                 <div style={{marginTop: '1em', marginBottom: '1em', fontWeight: 'bold'}}>Programmatic Selection: </div>
                 <div className="input-group">
-                  <input type="text" className="form-control" placeholder="Space separated IDs of records to select ..."/>
+                  <input type="text" className="form-control" ref="selectedInput"
+                    placeholder="Enter ID values separated by spaces ..."/>
                   <span className="input-group-btn">
-                    <button className="btn btn-secondary" type="button">Select</button>
+                    <button className="btn btn-secondary" onClick={this.setSelected} type="button">Select</button>
                   </span>
                 </div>
               </div>
@@ -134,9 +158,9 @@ class PageOne extends React.Component {
             <BootstrapTable data={this.props.data}
               headers={this.props.options.headers}
               select="multiple"
-              tableClass="table table-bordered"
+              tableClass={this.props.options.tableClass}
               resize={resize}
-              activeClass={this.props.activeClass}
+              activeClass={this.props.options.activeClass}
               selected={this.props.selected}
               onChange={this.onChange}
               columns={columns}/>
