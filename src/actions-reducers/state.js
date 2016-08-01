@@ -6,8 +6,16 @@ import { dataService } from '../services/dataService';
 // or off via the table properties.
 function forceResize() {
   setTimeout(function () {
-    if (window.dispatchEvent) window.dispatchEvent(new Event('resize'));
-    else document.dispatchEvent(new Event('resize'));
+    if (document.createEvent) { // W3C
+      var ev = document.createEvent('Event');
+      ev.initEvent('resize', true, true);
+      window.dispatchEvent(ev);
+    }
+    else { // IE
+      var element=document.documentElement;
+      var event=document.createEventObject();
+      element.fireEvent("onresize",event);
+    }
   }, 500);
 }
 
