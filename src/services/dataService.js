@@ -50,7 +50,7 @@ function DataService() {
     return data;
   };
 
-  this.getData = function (col, dir) {
+  this.getData = function () {
     return data;
   };
 }
