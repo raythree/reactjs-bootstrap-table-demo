@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import { routerReducer } from 'react-router-redux';
 
 const actionReducers = {};
-actionReducers['data'] = require('./data');
+actionReducers['state'] = require('./state');
 
 const action = {}; // action constants
 const actions = {};

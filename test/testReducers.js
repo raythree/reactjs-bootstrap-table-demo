@@ -11,8 +11,9 @@ describe('reducer tests', function () {
 
   it('should export the correct state', function () {
     state = store.getState();
-    assert(state.data);
-    assert(state.data.items.length === 500);
+    assert(state.state);
+    assert(state.state.options);
+    assert(state.state.items.length === 500);
   });
 
 });

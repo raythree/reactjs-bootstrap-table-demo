@@ -1,6 +1,10 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
+import Logger from 'simple-console-logger';
+
+const log = Logger.getLogger('PageOneContainer');
+
+//import {bindActionCreators} from 'redux';
 
 import {actions} from '../actions-reducers';
 
@@ -14,14 +18,22 @@ export const Container = (props) => {
 
 function mapStateToProps(state) {
   return {
-    data: state.data.items
+    data: state.state.items,
+    options: state.state.options,
+    selected: state.state.selected
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators(actions, dispatch)
-  };
+    setSelected: function (newSelection) {
+      dispatch(actions.setSelected(newSelection));
+    },
+    showHeader: function (show) {
+      log.debug('showHeader: ' + show);
+      dispatch(actions.showHeader(show));
+    }
+  }
 }
 
 export default connect(
