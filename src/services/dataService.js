@@ -33,24 +33,24 @@ function DataService() {
     data = newData;
   }
 
-  this.getData = function (col, dir) {
-    if (col) {
-      let sortedData = [];
-      data.forEach(row => {
-        if (data[col]) sortedData.push(row);
-      });
-      return sortedData.sort(() => {
+  this.sort = function (col, dir) {
+    if (col === 'rand') {
+      data.sort(function (first, second) {
         if (dir === 'asc') {
-          return 1;
+          return first.rand - second.rand;
         }
         else if (dir === 'desc') {
-          return 1;
+          return second.rand - first.rand;
         }
         else {
-          return 1;
+          return first.id - second.id;
         }
       });
     }
+    return data;
+  };
+
+  this.getData = function (col, dir) {
     return data;
   };
 }

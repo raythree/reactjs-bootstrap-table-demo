@@ -72,6 +72,9 @@ const actions = {
   dismissAlert: (id) => {
     return { type: 'DISMISS_ALERT', id };
   },
+  sort: (col, dir) => {
+    return { type: 'SORT', col, dir };
+  },
 };
 
 const reducer = (state = initialState, action) => {
@@ -92,6 +95,10 @@ const reducer = (state = initialState, action) => {
     case 'DELETE_SELECTED':
       dataService.delete(state.selected);
       return objectAssign({}, state, {selected:{}, selectedCount: 0, items: dataService.getData()});
+
+    case 'SORT':
+      dataService.sort(action.col, action.dir);
+      return objectAssign({}, state, {items: dataService.getData()});
 
     case 'SHOW_HEADER':
       forceResize();
@@ -122,7 +129,7 @@ const reducer = (state = initialState, action) => {
       state.alerts.forEach(alert => {
         newAlerts.push(alert);
       });
-      newAlerts.push({type: 'info', message: action.message, id: action.id});
+      newAlerts.push({type: 'success', message: action.message, id: action.id});
       return objectAssign({}, state, {alerts: newAlerts});
 
     case 'DISMISS_ALERT':

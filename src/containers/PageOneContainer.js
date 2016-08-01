@@ -61,6 +61,9 @@ function mapDispatchToProps(dispatch) {
     },
     dismissAlert: function (id) {
       dispatch(actions.dismissAlert(id));
+    },
+    sort: function (col, dir) {
+      dispatch(actions.sort(col, dir));
     }
   }
 }

@@ -22,6 +22,12 @@ class PageOne extends React.Component {
     this.onSelectType = this.onSelectType.bind(this);
     this.onClickLink = this.onClickLink.bind(this);
     this.onDismissAlert = this.onDismissAlert.bind(this);
+    this.onSort = this.onSort.bind(this);
+  }
+
+  onSort(col, dir) {
+    log.debug('onSort: ' + col + ' ' + dir);
+    this.props.sort(col, dir);
   }
 
   onDismissAlert(alert) {
@@ -136,7 +142,7 @@ class PageOne extends React.Component {
 
     return (
       <div>
-        <Notifier alerts={this.props.alerts} onDismiss={this.onDismissAlert} />
+        <Notifier alerts={this.props.alerts} timeout={5000} onDismiss={this.onDismissAlert} />
         <div className="row" id="header">
           <div className="col-md-12 well">
 
@@ -231,6 +237,7 @@ class PageOne extends React.Component {
               resize={resize}
               selected={this.props.selected}
               onChange={this.onChange}
+              onSort={this.onSort}
               columns={columns}>
 
               <div style={{margin: '3em', border: '1px solid gray', padding: '1em'}} className="well well-success">
