@@ -23,6 +23,16 @@ function DataService() {
     data = createData(size);
   }
 
+  this.delete = function(selection) {
+    let newData = [];
+    data.forEach(function (row) {
+      if (!selection[row.id]) {
+        newData.push(row);
+      }
+    });
+    data = newData;
+  }
+
   this.getData = function (col, dir) {
     if (col) {
       let sortedData = [];

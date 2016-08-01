@@ -3,6 +3,7 @@ import { DropdownList } from 'react-widgets';
 import BootstrapTable from 'reactjs-bootstrap-table';
 import Logger from 'simple-console-logger';
 import { selectionFromString } from '../util';
+import Notifier from 'react-bs-notifier';
 
 const log = Logger.getLogger("PageOne");
 
@@ -19,6 +20,20 @@ class PageOne extends React.Component {
     this.changeActiveClass = this.changeActiveClass.bind(this);
     this.onKeyPress = this.onKeyPress.bind(this);
     this.onSelectType = this.onSelectType.bind(this);
+    this.onClickLink = this.onClickLink.bind(this);
+    this.onDismissAlert = this.onDismissAlert.bind(this);
+  }
+
+  onDismissAlert(alert) {
+    this.props.dismissAlert(alert.id);
+  }
+
+  onClickLink(row) {
+    const message =
+    'You clicked item ' + row.id + ' random number ' + row.rand +
+    '. This column has a renderer that displays a link with ' +
+    'style bst-no-select so that clicking it does not change the selection.';
+    this.props.showAlert(message, row.id);
   }
 
   onSelectType(value) {
@@ -94,11 +109,34 @@ class PageOne extends React.Component {
       { name: 'col1', display: 'Column One' },
       { name: 'col2', display: 'Column Two' },
       { name: 'col3', display: 'Column Three' },
-      { name: 'rand', display: 'Random (sortable)', sort: true }
+      { name: 'rand', display: 'Random (sortable, clickable)', sort: true, renderer: (row) => {
+        return (
+          <a className="bst-no-select" href="#" onClick={this.onClickLink.bind(this, row)}>
+            {row.rand}
+          </a>
+        );
+      }}
     ];
+
+    let footer = '';
+    if (this.props.data.length) {
+      footer =
+        <div className="well" id="footer" style={{marginTop: '-20px', fontWeight: 'bold'}}>
+            <span style={{color:'green'}}>Selected:</span> {this.props.selectedCount}
+          <button className="btn btn-primary pull-right" style={{display: 'inline-block', marginTop: -5}}
+              onClick={this.props.clearSelection}>
+            Clear Selection
+          </button>
+          <div style={{height: 1}}></div>
+        </div>
+    }
+
+    let buttonsDisabled = false;
+    if (this.props.selectedCount == 0) buttonsDisabled = true;
 
     return (
       <div>
+        <Notifier alerts={this.props.alerts} onDismiss={this.onDismissAlert} />
         <div className="row" id="header">
           <div className="col-md-12 well">
 
@@ -145,14 +183,18 @@ class PageOne extends React.Component {
               </div>
 
               <div className="col-md-4">
-                <div style={{color: 'green', fontWeight: 'bold', marginTop: '1em', marginBottom: '1em'}}>
-                  Selected: {this.props.selectedCount}
+                <div style={{fontWeight: 'bold', marginTop: '1em', marginBottom: '1em'}}>
+                  <span style={{color:'green'}}>Total:</span> {this.props.data.length},
+                  <span style={{color:'green'}}>
+                    <span /> Selected:
+                  </span> {this.props.selectedCount}
                 </div>
                 <div>
-                  <button className="btn btn-primary" style={{marginRight:'1em'}} onClick={this.props.clearSelection}>
+                  <button className="btn btn-primary" style={{marginRight:'1em'}} disabled={buttonsDisabled}
+                      onClick={this.props.clearSelection}>
                     Clear Selected
                   </button>
-                  <button className="btn btn-warning">
+                  <button className="btn btn-warning" onClick={this.props.deleteSelected} disabled={buttonsDisabled}>
                     <span className="glyphicon glyphicon-remove"></span> Delete
                   </button>
                   <button className="btn btn-default" style={{marginLeft:'1em'}} onClick={this.props.reloadData}>
@@ -184,20 +226,23 @@ class PageOne extends React.Component {
               headers={this.props.options.headers}
               select={this.props.options.select}
               tableClass={this.props.options.tableClass}
-              resize={resize}
+              disableSelectText={this.props.options.disableSelectText}
               activeClass={this.props.options.activeClass}
+              resize={resize}
               selected={this.props.selected}
               onChange={this.onChange}
-              columns={columns}/>
+              columns={columns}>
 
-            <div className="well" id="footer" style={{marginTop: '-20px', fontWeight: 'bold', color: 'green'}}>
-                Selected: {this.props.selectedCount}
-              <button className="btn btn-primary pull-right" style={{display: 'inline-block', marginTop: -5}}
-                  onClick={this.props.clearSelection}>
-                Clear Selection
-              </button>
-              <div style={{height: 1}}></div>
-            </div>
+              <div style={{margin: '3em', border: '1px solid gray', padding: '1em'}} className="well well-success">
+                <p>This DIV is shown when there is no data in the table. When empty the table renders
+                the child element of the table.</p>
+                <p>Click Reload Data to load new data.</p>
+              </div>
+
+            </BootstrapTable>
+
+            {footer}
+
           </div>
         </div>
       </div>

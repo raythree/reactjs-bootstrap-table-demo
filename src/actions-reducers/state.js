@@ -6,7 +6,8 @@ import { dataService } from '../services/dataService';
 // or off via the table properties.
 function forceResize() {
   setTimeout(function () {
-    window.dispatchEvent(new Event('resize'));
+    if (window.dispatchEvent) window.dispatchEvent(new Event('resize'));
+    else document.dispatchEvent(new Event('resize'));
   }, 500);
 }
 
@@ -17,11 +18,13 @@ const initialState = {
     activeClass: "info",
     resize: true,
     headers: true,
-    select: 'single'
+    select: 'multiple',
+    disableSelectText: false
   },
   selected: {},
   selectedCount: 0,
-  pending: false
+  pending: false,
+  alerts: []
 };
 
 const constants = {};
@@ -54,11 +57,17 @@ const actions = {
   },
   setSelectType: (select) => {
     return { type: 'SET_SELECT_TYPE', select };
-  }
+  },
+  showAlert: (message, id) => {
+    return { type: 'SHOW_ALERT', message, id };
+  },
+  dismissAlert: (id) => {
+    return { type: 'DISMISS_ALERT', id };
+  },
 };
 
 const reducer = (state = initialState, action) => {
-  let newOpts;
+  let newOpts, newAlerts;
   switch (action.type) {
     case 'RELOAD_DATA':
       dataService.reloadData(action.size);
@@ -73,7 +82,7 @@ const reducer = (state = initialState, action) => {
       return objectAssign({}, state, {selected: {}, selectedCount: 0});
 
     case 'DELETE_SELECTED':
-      dataService.reloadData(action.size);
+      dataService.delete(state.selected);
       return objectAssign({}, state, {selected:{}, selectedCount: 0, items: dataService.getData()});
 
     case 'SHOW_HEADER':
@@ -99,6 +108,21 @@ const reducer = (state = initialState, action) => {
       forceResize();
       newOpts = objectAssign({}, state.options, {select: action.select});
       return objectAssign({}, state, {selected: {}, selectedCount: 0, options: newOpts});
+
+    case 'SHOW_ALERT':
+      newAlerts = [];
+      state.alerts.forEach(alert => {
+        newAlerts.push(alert);
+      });
+      newAlerts.push({type: 'info', message: action.message, id: action.id});
+      return objectAssign({}, state, {alerts: newAlerts});
+
+    case 'DISMISS_ALERT':
+      newAlerts = [];
+      state.alerts.forEach(alert => {
+        if (alert.id !== action.id) newAlerts.push(alert);
+      });
+      return objectAssign({}, state, {alerts: newAlerts});
 
     default:
       return state;

@@ -21,7 +21,8 @@ function mapStateToProps(state) {
     data: state.state.items,
     options: state.state.options,
     selected: state.state.selected,
-    selectedCount: state.state.selectedCount
+    selectedCount: state.state.selectedCount,
+    alerts: state.state.alerts
   };
 }
 
@@ -51,6 +52,15 @@ function mapDispatchToProps(dispatch) {
     },
     setSelectType: function (val) {
       dispatch(actions.setSelectType(val));
+    },
+    deleteSelected: function () {
+      dispatch(actions.deleteSelected());
+    },
+    showAlert: function (message, id) {
+      dispatch(actions.showAlert(message, id));
+    },
+    dismissAlert: function (id) {
+      dispatch(actions.dismissAlert(id));
     }
   }
 }
