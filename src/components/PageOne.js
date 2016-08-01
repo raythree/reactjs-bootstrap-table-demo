@@ -23,6 +23,7 @@ class PageOne extends React.Component {
     this.onClickLink = this.onClickLink.bind(this);
     this.onDismissAlert = this.onDismissAlert.bind(this);
     this.onSort = this.onSort.bind(this);
+    this.onChangeSelectText = this.onChangeSelectText.bind(this);
   }
 
   onSort(col, dir) {
@@ -77,6 +78,11 @@ class PageOne extends React.Component {
   onAutoResize(e) {
     log.debug('onAutoResize: ' + e.target.checked);
     this.props.autoResize(e.target.checked);
+  }
+
+  onChangeSelectText(e) {
+    log.debug('onChangeSelectText: ' + e.target.checked);
+    this.props.setDisableSelectText(e.target.checked);
   }
 
   onChange(newSelection) {
@@ -147,6 +153,7 @@ class PageOne extends React.Component {
           <div className="col-md-12 well">
 
             <h3>Demo for <span style={{color:'green'}}>reactjs-bootstrap-table</span></h3>
+            <a href="https://github.com/raythree/reactjs-bootstrap-table-demo" target="_blank">Code is here.</a>
             <div className="row">
               <div className="col-md-4">
                 <label>select</label>
@@ -182,7 +189,8 @@ class PageOne extends React.Component {
                 </div>
                 <div className="checkbox">
                   <label>
-                    <input type="checkbox" value="" />
+                    <input type="checkbox" checked={this.props.options.disableSelectText}
+                      onClick={this.onChangeSelectText} onChange={noop}/>
                     Disable Text Select
                   </label>
                 </div>

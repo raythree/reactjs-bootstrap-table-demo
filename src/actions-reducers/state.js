@@ -75,6 +75,9 @@ const actions = {
   sort: (col, dir) => {
     return { type: 'SORT', col, dir };
   },
+  setDisableSelectText: (value) => {
+    return { type: 'SET_DISABLE_SELECT', value };
+  }
 };
 
 const reducer = (state = initialState, action) => {
@@ -123,6 +126,11 @@ const reducer = (state = initialState, action) => {
       forceResize();
       newOpts = objectAssign({}, state.options, {select: action.select});
       return objectAssign({}, state, {selected: {}, selectedCount: 0, options: newOpts});
+
+    case 'SET_DISABLE_SELECT':
+      console.log('set disable select: ' + action.value);
+      newOpts = objectAssign({}, state.options, {disableSelectText: action.value});
+      return objectAssign({}, state, {options: newOpts});
 
     case 'SHOW_ALERT':
       newAlerts = [];

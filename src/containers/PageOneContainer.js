@@ -64,6 +64,9 @@ function mapDispatchToProps(dispatch) {
     },
     sort: function (col, dir) {
       dispatch(actions.sort(col, dir));
+    },
+    setDisableSelectText: function (value) {
+      dispatch(actions.setDisableSelectText(value));      
     }
   }
 }
